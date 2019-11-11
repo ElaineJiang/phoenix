@@ -412,8 +412,9 @@ static inline void schedule_tasks(thread_wrapper_arg_t *th_arg)
    pthread_attr_setscope(&attr, PTHREAD_SCOPE_SYSTEM);
 
 #ifdef _LINUX_
-   unsigned long cpu_set; // bit array of available processors
+   unsigned long cpu_set = 0; // bit array of available processors
    // Create a thread for each availble processor to handle the split data
+   int max_procs = 15;
    CHECK_ERROR(sched_getaffinity(0, sizeof(cpu_set), &cpu_set) == -1);
    for (thread_cnt = curr_proc = 0; 
         curr_proc < sizeof(cpu_set) && thread_cnt < num_threads; 
@@ -1154,7 +1155,7 @@ static inline int getNumProcs(void)
    int num_procs = 0;
 
 #ifdef _LINUX_
-   unsigned long cpus;
+   unsigned long cpus = 15;
    int i;
    // Returns number of processors available to process (based on affinity mask)
    CHECK_ERROR(sched_getaffinity(0, sizeof(cpus), &cpus) == -1);
